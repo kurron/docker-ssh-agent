@@ -31,12 +31,11 @@ function runContainer() {
                   --tty \
                   --user=${USER_ID}:${GROUP_ID} \
                   --volume ${SSH_AUTH_SOCK}:${SSH_AUTH_SOCK} \
-                  --volume $(pwd):$(pwd) \
                   --volume ${HOME_DIR}:${HOME_DIR} \
                   --volume /etc/passwd:/etc/passwd \
                   --volume /etc/group:/etc/group \
-                  --workdir $(pwd) \
-                  dockersshagent_deployer:latest ./populate-ssh-agent.sh"
+                  --workdir /tmp \
+                  dockersshagent_deployer:latest /tmp/populate-ssh-agent.sh"
   echo $CMD
   $CMD
 }
