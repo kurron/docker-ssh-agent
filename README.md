@@ -1,7 +1,7 @@
 # Overview
-This project is a simple Docker container with Ansible installed.  It has been
-used to provision EC2 instances on private network, requiring access via a
-Bastion server.
+This project is a simple Docker container with [Vault](https://www.vaultproject.io/)
+installed.  The container will consult Vault to obtain the private half of an
+SSH key and add it to the SSH agent.  No keys ever touch disk.
 
 # Guidebook
 Details about this project are contained in the [guidebook](guidebook/guidebook.md)
