@@ -1,30 +1,22 @@
 #!/bin/bash
 
+set -x
+
 # Pulls the private SSH key from Ansible Vault.  All variables are expected
 # to be available in the environment.
 
 echo "VAULT_ADDR is ${VAULT_ADDR}"
 
-# log into Vault
-LOGIN="vault write auth/approle/login role_id=${ROLE_ID} secret_id=${SECRET_ID}"
-echo ${LOGIN}
-${LOGIN}
-
 # generate a temporary access token
-GRAB_TOKEN="vault write -field=token auth/approle/login role_id=${ROLE_ID} secret_id=${SECRET_ID}"
-echo ${GRAB_TOKEN}
-export VAULT_TOKEN=$(${GRAB_TOKEN})
-#echo ${VAULT_TOKEN}
+export VAULT_TOKEN=$(vault write -field=token auth/approle/login role_id=${ROLE_ID} secret_id=${SECRET_ID})
 
-# read the SSH key
-PRIVATE_SSH_KEY=$(vault read ${VAULT_PATH})
-#echo ${PRIVATE_SSH_KEY}
+# read the value from Vault, storing it in /tmp so ssh-add can read it
+KEY_FILE=/tmp/private-key
+vault read -field=value ${VAULT_PATH} > ${KEY_FILE}
+chmod 0400 ${KEY_FILE}
 
 # add the key to the SSH agent
-ADD_KEY="echo ${PRIVATE_SSH_KEY} | ssh-add "
-echo ${ADD_KEY}
-${ADD_KEY}
+ssh-add -t 60 ${KEY_FILE}
 
 # prove that the key was installed
-SHOW_KEY="ssh-add -L"
-${SHOW_KEY}
+ssh-add -L
