@@ -15,8 +15,8 @@ KEY_FILE=/tmp/private-key
 vault read -field=value ${VAULT_PATH} > ${KEY_FILE}
 chmod 0400 ${KEY_FILE}
 
-# add the key to the SSH agent
-ssh-add -t 60 ${KEY_FILE}
+# add the key to the SSH agent for 5 minutes
+ssh-add -t 300 ${KEY_FILE}
 
 # prove that the key was installed
 ssh-add -L
